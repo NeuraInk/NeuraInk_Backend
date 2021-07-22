@@ -1,0 +1,6 @@
+dominate>=2.4.0
+visdom>=0.1.8.8
+fastapi
+uvicorn
+pydantic
+boto3
