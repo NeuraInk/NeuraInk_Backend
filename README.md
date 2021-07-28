@@ -1,6 +1,6 @@
 # NeuraInk_Backend
 
-The backend service of NeuraInk uses the CycleGAN machine learning algorithm to implement the inkwash photo transformation.
+The backend service of NeuraInk uses the [CycleGAN](https://junyanz.github.io/CycleGAN/) machine learning algorithm to implement the inkwash photo transformation.
  
 ### How to run on AWS EC2 Instance / Locally
 1. Create an EC2 Instance
