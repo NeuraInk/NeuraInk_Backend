@@ -1,15 +1,15 @@
 # NeuraInk_Backend
 
-The backend service of NeuraInk uses the [CycleGAN](https://junyanz.github.io/CycleGAN/) machine learning algorithm to implement the inkwash photo transformation.
+### The backend service of NeuraInk uses the [CycleGAN](https://junyanz.github.io/CycleGAN/) machine learning algorithm to implement the inkwash photo transformation.
  
-### :triangular_flag_on_post:	Deploy Machine Learning Model on AWS EC2 Instance / Locally
+## :triangular_flag_on_post:	Deploy Machine Learning Model on AWS EC2 Instance / Locally
 1. Create an EC2 Instance (skip this step if you are running locally)
 2. git clone the NeuraInk_Backend repo
 3. Run `chmod +x ./setup.sh ./start.sh` to give executeable permissions to both bash files
 4. Run `./setup.sh` to setup the virtual environment
 5. Run `./start.sh` to start the backend services
 
-### :triangular_flag_on_post: Deploy Machine Learning Model with AWS SageMaker
+## :triangular_flag_on_post: Deploy Machine Learning Model with AWS SageMaker
 1. Create a jupyter notebook instance in SageMaker
 2. Upload your model file as a ```tar.gz file``` to a S3 bucket.
 3. Create an ```inference.py``` file as the entry point to your model. You can put it in the same folder as your notebook.
@@ -17,11 +17,10 @@ The backend service of NeuraInk uses the [CycleGAN](https://junyanz.github.io/Cy
     - ```input_fn()``` function to handle your input such as: ``` content_type='application/json' ``` and you can conduct preprocessing of your input data in here.
     - ```predict_fn()``` function will evaluate the input data that you processed with the model
     - ```output_fn()``` function could process the prediction output to your desired format, such as json.
-
 4. Define an IAM role in the notebook instance.
 5. Create a pytorch model in the notebook instance and deploy it with the instance type that you specified.
 
-### :triangular_flag_on_post: Invoke AWS SageMaker Model Endpoint with Lambda Function
+## :triangular_flag_on_post: Invoke AWS SageMaker Model Endpoint with Lambda Function
 Once you ran the notebook instance, it will automatically create an endpoint for you. With that information, you can create a lambda function to invoke that endpoint. In our case, we used python 3.8 as our language for the lambda function.
 
 On top of that, we also created an S3 trigger, so whenever a new picture is passed into the bucket that we specified, the lambda function will be called automatically and hence invoke our model endpoint.
