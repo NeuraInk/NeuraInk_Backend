@@ -1,0 +1,6 @@
+{
+    "app": "python cdk_stack.py",
+    "context": {
+    "@aws-cdk/aws-ecr-assets:dockerIgnoreSupport": true
+  }
+}
