@@ -99,78 +99,19 @@ class bk(BaseModel):
     file_name: str
     bucket_name: str
 
-# @app.get('/')
-# def read_root():
-#     return {'message': 'Welcome from the API'}
+@app.get('/')
+def read_root():
+    return {'message': 'Welcome from the API'}
 
-# @app.post('/process/')
-# def get_tem_image(body: bk):
-#
-#     s3 = boto3.client('s3')
-#     tmp = './tmp/'
-#     if os.path.exists(os.path.dirname(tmp)):
-#         os.system('rm -rf {}'.format(tmp))
-#     os.mkdir(tmp)
-#     s3.download_file(body.bucket_name, body.file_path + body.file_name, tmp + body.file_name)
-#
-#     command = "python test.py --dataroot {} --name {} --results_dir {} --gpu_ids -1 --model test --no_dropout --load_size {} --preprocess scale_width --crop_size {} --display_winsize {}"
-#     dataroot = tmp
-#     name = "inkwash"
-#     results_dir = tmp
-#     load_size = "512"
-#     crop_size = "512"
-#     display_winsize = "512"
-#
-#     os.system(command.format(dataroot,name,results_dir,load_size,crop_size,display_winsize))
-#
-#     print("\n-----------------------------------\n")
-#     result_path = tmp + "inkwash/test_latest/images"
-#     files = [f for f in os.listdir(result_path) if os.path.isfile(os.path.join(result_path, f))]
-#     print(files)
-#     print("\n-----------------------------------\n")
-#     for file in files:
-#         file_path = result_path + '/' + file
-#         print(file)
-#         obj_name = 'result/' + file
-#         # s3_url, arn, object_url = upload_to_s3(file, "neuraink", file)
-#         upload_file(file_path, body.bucket_name, obj_name)
-#         # print(upload_to_s3(file, "neuraink", file))
-#         print("\n")
-#     print("\n-----------------------------------\n")
-#
-#     # os.system('rm -rf {}'.format(tmp))
-#
-#     return {"message": "CycleGan Success",
-#             "error": False,
-#             "success": True,
-#             "data": {
-#                 "s3_url": 's3://{}/{}'.format(body.bucket_name, obj_name)
-#                 }
-#         }
-
-def handler(event, context):
-    if event['task'] == 'welcome':
-
-        result = {
-            "statusCode": 200,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "body": json.dumps({
-                "message": "Welcome from the API",
-                "error": False,
-                "success": True,
-            })
-        }
-
-        return result
+@app.post('/process/')
+def get_tem_image(body: bk):
 
     s3 = boto3.client('s3')
     tmp = './tmp/'
     if os.path.exists(os.path.dirname(tmp)):
         os.system('rm -rf {}'.format(tmp))
     os.mkdir(tmp)
-    s3.download_file(event['bucket_name'], event['file_path'] + event['file_name'], tmp + event['file_name'])
+    s3.download_file(body.bucket_name, body.file_path + body.file_name, tmp + body.file_name)
 
     command = "python test.py --dataroot {} --name {} --results_dir {} --gpu_ids -1 --model test --no_dropout --load_size {} --preprocess scale_width --crop_size {} --display_winsize {}"
     dataroot = tmp
@@ -180,7 +121,7 @@ def handler(event, context):
     crop_size = "512"
     display_winsize = "512"
 
-    os.system(command.format(dataroot, name, results_dir, load_size, crop_size, display_winsize))
+    os.system(command.format(dataroot,name,results_dir,load_size,crop_size,display_winsize))
 
     print("\n-----------------------------------\n")
     result_path = tmp + "inkwash/test_latest/images"
@@ -192,24 +133,83 @@ def handler(event, context):
         print(file)
         obj_name = 'result/' + file
         # s3_url, arn, object_url = upload_to_s3(file, "neuraink", file)
-        upload_file(file_path, event['bucket_name'], obj_name)
+        upload_file(file_path, body.bucket_name, obj_name)
         # print(upload_to_s3(file, "neuraink", file))
         print("\n")
     print("\n-----------------------------------\n")
 
     # os.system('rm -rf {}'.format(tmp))
 
-    result = {
-        "statusCode":200,
-        "headers":{
-            "Content-Type": "application/json"
-        },
-        "body": json.dumps({
-            "message": "CycleGan Success",
+    return {"message": "CycleGan Success",
             "error": False,
             "success": True,
-            "s3_url": 's3://{}/{}'.format(event['bucket_name'], obj_name)
-            })
+            "data": {
+                "s3_url": 's3://{}/{}'.format(body.bucket_name, obj_name)
+                }
         }
 
-    return result
+# def handler(event, context):
+#     if event['task'] == 'welcome':
+
+#         result = {
+#             "statusCode": 200,
+#             "headers": {
+#                 "Content-Type": "application/json"
+#             },
+#             "body": json.dumps({
+#                 "message": "Welcome from the API",
+#                 "error": False,
+#                 "success": True,
+#             })
+#         }
+
+#         return result
+
+#     s3 = boto3.client('s3')
+#     tmp = './tmp/'
+#     if os.path.exists(os.path.dirname(tmp)):
+#         os.system('rm -rf {}'.format(tmp))
+#     os.mkdir(tmp)
+#     s3.download_file(event['bucket_name'], event['file_path'] + event['file_name'], tmp + event['file_name'])
+
+#     command = "python test.py --dataroot {} --name {} --results_dir {} --gpu_ids -1 --model test --no_dropout --load_size {} --preprocess scale_width --crop_size {} --display_winsize {}"
+#     dataroot = tmp
+#     name = "inkwash"
+#     results_dir = tmp
+#     load_size = "512"
+#     crop_size = "512"
+#     display_winsize = "512"
+
+#     os.system(command.format(dataroot, name, results_dir, load_size, crop_size, display_winsize))
+
+#     print("\n-----------------------------------\n")
+#     result_path = tmp + "inkwash/test_latest/images"
+#     files = [f for f in os.listdir(result_path) if os.path.isfile(os.path.join(result_path, f))]
+#     print(files)
+#     print("\n-----------------------------------\n")
+#     for file in files:
+#         file_path = result_path + '/' + file
+#         print(file)
+#         obj_name = 'result/' + file
+#         # s3_url, arn, object_url = upload_to_s3(file, "neuraink", file)
+#         upload_file(file_path, event['bucket_name'], obj_name)
+#         # print(upload_to_s3(file, "neuraink", file))
+#         print("\n")
+#     print("\n-----------------------------------\n")
+
+#     # os.system('rm -rf {}'.format(tmp))
+
+#     result = {
+#         "statusCode":200,
+#         "headers":{
+#             "Content-Type": "application/json"
+#         },
+#         "body": json.dumps({
+#             "message": "CycleGan Success",
+#             "error": False,
+#             "success": True,
+#             "s3_url": 's3://{}/{}'.format(event['bucket_name'], obj_name)
+#             })
+#         }
+
+#     return result
