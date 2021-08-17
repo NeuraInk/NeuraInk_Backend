@@ -111,6 +111,18 @@ class bk(BaseModel):
 def read_root():
     return {'message': 'Welcome from the API'}
 
+@app.post('/p/')
+def test_image(body: bk):
+    obj_name = "666.avi"
+    return {"message": "CycleGan Success",
+            "error": False,
+            "success": True,
+            "data": {
+                "s3_url": 's3://{}/{}'.format(body.bucket_name, obj_name),
+                "object_url": 'https://neurainkapp.s3.amazonaws.com/result/test_3_fake.png'
+                }
+        }
+
 @app.post('/process/')
 def get_tem_image(body: bk):
 
