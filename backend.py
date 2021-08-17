@@ -115,7 +115,8 @@ def read_root():
 def get_tem_image(body: bk):
 
     s3 = boto3.client('s3')
-    tmp = '/home/ubuntu/cyclegan/tmp/'
+#     tmp = '/home/ubuntu/cyclegan/tmp/'
+    tmp = './tmp/'
     if os.path.exists(os.path.dirname(tmp)):
         os.system('rm -rf {}'.format(tmp))
     os.mkdir(tmp)
