@@ -5,6 +5,7 @@ from fastapi import FastAPI
 import json
 from pydantic import BaseModel
 import boto3
+from fastapi.middleware.cors import CORSMiddleware
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
@@ -12,6 +13,13 @@ app = FastAPI(
     title="CycleGAN Test",
     description="""Port 8000""",
     version="0.0.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 s3_client = boto3.client('s3')
@@ -107,11 +115,21 @@ def read_root():
 def get_tem_image(body: bk):
 
     s3 = boto3.client('s3')
-    tmp = './tmp/'
+    tmp = '/home/ubuntu/cyclegan/tmp/'
     if os.path.exists(os.path.dirname(tmp)):
         os.system('rm -rf {}'.format(tmp))
     os.mkdir(tmp)
-    s3.download_file(body.bucket_name, body.file_path + body.file_name, tmp + body.file_name)
+
+    try:
+        s3.download_file(body.bucket_name, body.file_path + body.file_name, tmp + body.file_name)
+    except:
+        print("File Download Failed...")
+        return {"message": "File Download Failed...",
+            "error": True,
+            "success": False,
+            "data": {}
+        }
+
 
     command = "python test.py --dataroot {} --name {} --results_dir {} --gpu_ids -1 --model test --no_dropout --load_size {} --preprocess scale_width --crop_size {} --display_winsize {}"
     dataroot = tmp
@@ -129,16 +147,19 @@ def get_tem_image(body: bk):
     print(files)
     print("\n-----------------------------------\n")
     for file in files:
-        file_path = result_path + '/' + file
-        print(file)
-        obj_name = 'result/' + file
-        # s3_url, arn, object_url = upload_to_s3(file, "neuraink", file)
-        upload_file(file_path, body.bucket_name, obj_name)
-        # print(upload_to_s3(file, "neuraink", file))
-        print("\n")
+        if 'fake' in file:
+            file_path = result_path + '/' + file
+            print(file)
+            obj_name = body.file_path + file
+            # s3_url, arn, object_url = upload_to_s3(file, "neuraink", file)
+            upload_file(file_path, body.bucket_name, obj_name)
+            # print(upload_to_s3(file, "neuraink", file))
+            print("\n")
     print("\n-----------------------------------\n")
 
-#     os.system('rm -rf {}'.format(tmp))
+    os.system('rm -rf {}'.format(tmp))
+
+    print('https://{}.s3.amazonaws.com/{}'.format(body.bucket_name, obj_name))
 
     return {"message": "CycleGan Success",
             "error": False,
