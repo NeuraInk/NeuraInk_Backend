@@ -138,13 +138,14 @@ def get_tem_image(body: bk):
         print("\n")
     print("\n-----------------------------------\n")
 
-    # os.system('rm -rf {}'.format(tmp))
+    os.system('rm -rf {}'.format(tmp))
 
     return {"message": "CycleGan Success",
             "error": False,
             "success": True,
             "data": {
-                "s3_url": 's3://{}/{}'.format(body.bucket_name, obj_name)
+                "s3_url": 's3://{}/{}'.format(body.bucket_name, obj_name),
+                "object_url": 'https://{}.s3.amazonaws.com/{}'.format(body.bucket_name, obj_name)
                 }
         }
 
