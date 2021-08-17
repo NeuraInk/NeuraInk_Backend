@@ -138,7 +138,7 @@ def get_tem_image(body: bk):
         print("\n")
     print("\n-----------------------------------\n")
 
-    os.system('rm -rf {}'.format(tmp))
+#     os.system('rm -rf {}'.format(tmp))
 
     return {"message": "CycleGan Success",
             "error": False,
